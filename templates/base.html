@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Library System{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #e3f2fd, #f1f8e9);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.6rem;
+    }
+    .navbar {
+      background-color: #f1b8be !important;
+    }
+    .header-slogan {
+      padding: 120px 20px 30px;
+      text-align: center;
+      background-color: #f8f9fa;
+      
+    }
+
+    .header-slogan h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #575757;
+    }
+    .video-section {
+      
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
+    }
+    .video-section video {
+      width: 100%;
+      max-width: 1000px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    
+    .about-library {
+      padding: 50px 15px;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+    .about-library img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+    .about-library .description{
+      max-width: 600px;
+    }
+
+    .library-tools {
+      margin-top: 60px;
+    }
+    .library-tools .card {
+      background-color:  #e6bfbf;;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+    }
+    .library-tools .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .library-tools .card-title {
+      color: #d63384;
+      font-weight: 600;
+    }
+    .featured-books img {
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .articles {
+      background: linear-gradient(to right, #f39fa9, #fff3e0);
+      border-radius: 15px;
+      padding: 30px;
+      margin-top: 40px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .articles h5 {
+      color: #000000;
+      font-weight: 600;
+    }
+    .articles p {
+      color: #4e342e;
+    }
+    .card-grid {
+      margin-top: 3rem;
+    }
+  
+    .card-grid .card {
+      transition: transform 0.3s ease;
+      border-radius: 15px;
+      border: none;
+    }
+    .card-grid .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      background: #5b5858;
+      color: white;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top shadow py-3">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+      <i class="bi bi-book me-2"></i> Library
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center gap-2">
+        {% if user.is_authenticated %}
+        {% if request.user.role == 'member' %}
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-1" href="{% url 'dashboard' %}">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+          </li>
+        {% elif request.user.role == 'faculty' %}
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-1" href="{% url 'faculty-dashboard' %}">
+          <i class="bi bi-journal-bookmark"></i> Faculty Dashboard
+          </a>
+        </li>
+       {% elif request.user.role == 'admin' %}
+       <li class="nav-item">
+       <a class="nav-link d-flex align-items-center gap-1" href="/admin/">
+      <i class="bi bi-shield-lock-fill"></i> Admin Panel
+      </a>
+      </li>
+      <li class="nav-item">
+      <a class="nav-link d-flex align-items-center gap-1" href="{% url 'faculty-dashboard' %}">
+      <i class="bi bi-journal-bookmark"></i> Faculty Dashboard
+      </a>
+      </li>
+      {% endif %}
+
+
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-1" href="{% url 'book-list' %}">
+              <i class="bi bi-journal-bookmark"></i> Booklist
+            </a>
+          </li>
+
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if user.member_profile.profile %}
+                  <img src="{{ user.member_profile.profile.url }}" class="rounded-circle" width="32" height="32">
+              {% else %}
+                  <img src="https://i.pravatar.cc/32?u={{ user.id }}" class="rounded-circle" width="32" height="32">
+              {% endif %}
+              <span>{{ user.username }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'user_profile' %}">
+                  <i class="bi bi-person-circle"></i> Profile
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-1" href="{% url 'login' %}">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-1" href="{% url 'signup' %}">
+              <i class="bi bi-person-plus"></i> Signup
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container-fluid pt-5" style="background-color: #030303;">
+  <div class="container" style="padding-top: 50px;">
+    <div class="row align-items-center mb-5">
+      <div class="col-md-6 text-center">
+        <h1 style="font-size: 2.5rem; font-style: italic; font-weight: 900; color: #d63384;">
+          Unlock Knowledge,<br> <span style="color: #5c2a47;">One Page at a Time</span>
+        </h1>
+        <p class="lead mt-3" style="color: #555;">
+          "A library is not just a building with books – it's a gateway to endless imagination and wisdom."
+        </p>
+      </div>
+
+      <!-- Right: Video -->
+      <div class="col-md-6" style="padding-top: 30px;">
+        <div class="ratio ratio-16x9 rounded shadow">
+          <video autoplay muted loop>
+            <source src="{% static 'video/video2.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container mb-5" style="padding-top: 100px;">
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 border-0">
+          <div class="card-body">
+            <i class="bi bi-book" style="font-size: 2rem; color: #d63384;"></i>
+            <h5 class="card-title mt-2">1000+ Books</h5>
+            <p class="card-text">A rich collection of fiction, non-fiction, and academic resources at your fingertips.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 border-0">
+          <div class="card-body">
+            <i class="bi bi-journal-text" style="font-size: 2rem; color: #5c2a47;"></i>
+            <h5 class="card-title mt-2">Digital Resources</h5>
+            <p class="card-text">Access e-books, journals, and databases from anywhere, anytime.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 border-0">
+          <div class="card-body">
+            <i class="bi bi-people" style="font-size: 2rem; color: #a4133c;"></i>
+            <h5 class="card-title mt-2">Community Space</h5>
+            <p class="card-text">Collaborative spaces for learning, group study, and discussion sessions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- About Section -->
+  <div class="about-library container mb-5" style=" padding: 30px; ">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-3">
+        <img src="{% static 'images/img5.jpg' %}" alt="Library" class="img-fluid rounded shadow">
+      </div>
+      <div class="col-md-6">
+        <h3 style="font-weight: 800; color: #5c2a47;">About Our <span style="color: #d63384;">‘Library’</span></h3>
+        <p class="mt-3" style="font-size: 1.1rem; color: #333;">
+          Our library is a vibrant hub of knowledge and resources where students, faculty, and readers of all ages gather to explore, learn, and grow.
+          Whether it's for research, leisure reading, or academic development, we provide a curated collection of books, journals, digital resources,
+          and a welcoming environment that inspires curiosity and lifelong learning.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section class="text-center my-5" >
+    <h3 class="mb-3">Ready to dive into the world of books?</h3>
+    <a href="#" class="btn btn-lg btn-outline-danger"><i class="bi bi-arrow-right-circle"></i> Join Now</a>
+  </section>
+
+
+   <section class="library-tools container my-5">
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="card p-4">
+          <i class="bi bi-bookmark-star" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3">Book Recommendations</h5>
+          <p class="card-text">Get personalized book suggestions based on your reading history.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card p-4">
+          <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3">Due Date Reminders</h5>
+          <p class="card-text">Receive alerts for upcoming book return dates and renewals.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card p-4">
+          <i class="bi bi-cloud-arrow-down" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-3">Download eBooks</h5>
+          <p class="card-text">Access and download digital books straight to your device.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Featured Books Section -->
+   <section class="my-5 container" style="padding-top: 100px;">
+      <h2 class="text-center mb-4"><span style="font-size: xx-large; font-style:inherit; font-weight: 900;">Featured Books</span></h2>
+      <div class="row featured-books text-center">
+        <div class="col-md-4 mb-4">
+          <img src="{% static 'images/img1.jpg' %}" class="img-fluid" alt="Book 1">
+          <h5 class="mt-2">Introduction to Indian History</h5>
+        </div>
+        <div class="col-md-4 mb-4">
+          <img src="{% static 'images/img2.jpg' %}" class="img-fluid" alt="Book 2">
+          <h5 class="mt-2">Classic Literature Review</h5>
+        </div>
+        <div class="col-md-4 mb-4">
+          <img src="{% static 'images/img3.jpg' %}" class="img-fluid" alt="Book 3">
+          <h5 class="mt-2">Introduction to Indian politics</h5>
+        </div>
+      </div>
+    </section>
+
+    <section class="articles container"  style="margin-top:100px;">
+      <h3 class="text-center mb-4">Library Articles & Insights</h3>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card p-3">
+            <h5><i class="bi bi-lightbulb"></i> Why Libraries Are More Important Than Ever</h5>
+            <p>Explore how libraries foster learning, provide access to information, and create community spaces for growth.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3">
+            <h5><i class="bi bi-bookmark-check"></i> Benefits of Reading Every Day</h5>
+            <p>Reading improves brain function, reduces stress, and enhances knowledge. Learn how to build a daily reading habit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <hr>
+  
+
+  <!-- Latest News Section -->
+<section class="container my-5" style="padding-top: 100px;">
+  <h2 class="text-center mb-4">
+    <span style="font-size: xx-large; font-style: italic; font-weight: 900;">Latest News</span>
+  </h2>
+  <div class="row g-4">
+    <!-- News Card 1 -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+        <img src="https://images.indianexpress.com/2025/06/orson-welles.jpg?w=640" class="card-img-top" alt="News 1">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-broadcast"></i>Director of the greatest film </h5>
+          <p class="card-text">The legendary filmmaker Orson Welles, hailed by many as the greatest to have ever lived, was a victim of his own temperament and lifestyle. </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Card 2 -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+        <img src="https://th-i.thgim.com/public/incoming/6gz24a/article69734728.ece/alternates/LANDSCAPE_1200/Netherlands_NATO_Summit_20169.jpg" class="card-img-top" alt="News 2">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-calendar-week"></i>Israel-Iran conflict LIVE:</h5>
+          <p class="card-text">Earlier on Tuesday, both Iran and Israel signaled that the air war between the two nations had ended, at least for now, ....</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Card 3 -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+        <img src="https://images.indianexpress.com/2025/06/Bibi-Trump-Ayatollah.jpg?w=640" class="card-img-top" alt="News 3">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-collection-play"></i> After the fragile truce: </h5>
+          <p class="card-text">Trump has expressed frustration with Israel, but its leader has already shown the ability to successfully play the President.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <section class="container my-5">
+  <h3 class="text-center mb-4"><i class="bi bi-calendar-event"></i> Upcoming Events</h3>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">📚 Book Club Meetup - <strong>June 30, 2025</strong></li>
+    <li class="list-group-item">🖋️ Author Talk: Jane Doe - <strong>July 5, 2025</strong></li>
+    <li class="list-group-item">🎓 Research Tools Workshop - <strong>July 12, 2025</strong></li>
+  </ul>
+</section>
+</div>
+
+ 
+
+<footer>
+  <div class="container">
+    <p>&copy; {{ year|default:2025 }} Library Management System. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

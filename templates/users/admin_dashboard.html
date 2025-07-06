@@ -1,0 +1,271 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #fef6f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar {
+      background-color: #c15259;
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+      font-weight: bold;
+    }
+    .dashboard-card {
+      transition: transform 0.2s ease;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-radius: 15px;
+      background-color: #fff;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+    }
+    .card-header {
+      background-color: #ec6776;
+      color: white;
+      font-weight: 600;
+    }
+    .stats-box {
+      background-color: #fff;
+      border-left: 6px solid #c15259;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .form-section {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-top: 50px;
+    }
+    .section-title {
+      color: #ce3446;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+    .btn-custom {
+      background-color: #c15259;
+      color: #fff;
+      font-weight: bold;
+    }
+    .btn-custom:hover {
+      background-color: #9e3f45;
+    }
+
+    .form-card {
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-card h4 {
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .form-card .btn {
+    font-weight: 500;
+  }
+
+  .form-card:hover {
+    transform: translateY(-3px);
+    transition: 0.3s ease-in-out;
+  }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg px-4">
+  <a class="navbar-brand" href="#">Library Admin</a>
+  <div class="ms-auto d-flex align-items-center">
+    {% if user.is_authenticated %}
+      <div class="dropdown me-2">
+        <button class="btn btn-light dropdown-toggle" type="button" id="dashboardDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dashboardDropdown">
+          {% if user.role == 'admin' %}
+            <li><a class="dropdown-item" href="{% url 'admin-dashboard' %}"><i class="bi bi-shield-lock"></i> Admin Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'faculty-dashboard' %}"><i class="bi bi-person-badge"></i> Faculty Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'member-dashboard' %}"><i class="bi bi-book"></i> Member Dashboard</a></li>
+          {% elif user.role == 'faculty' %}
+            <li><a class="dropdown-item" href="{% url 'faculty-dashboard' %}"><i class="bi bi-person-badge"></i> Faculty Dashboard</a></li>
+          {% elif user.role == 'member' %}
+            <li><a class="dropdown-item" href="{% url 'member-dashboard' %}"><i class="bi bi-book"></i> Member Dashboard</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      <a href="{% url 'home' %}" class="btn btn-light me-2">Home</a>
+      <form method="post" action="{% url 'logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-light">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn btn-light me-2"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+      <a href="{% url 'signup' %}" class="btn btn-light"><i class="bi bi-person-plus"></i> Signup</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="container mt-4">
+
+  <h2 class="text-center text-danger mb-5">Admin Dashboard</h2>
+
+  <div class="row text-center mb-5">
+    <div class="col-md-4">
+      <div class="card dashboard-card p-4" style="background-color: #d3a3a6;">
+        <i class="bi bi-book-half display-4 text-danger mb-3"></i>
+        <h5>Add Book</h5>
+        <a href="{% url 'add_book' %}" class="btn btn-outline-danger mt-2">Go</a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card dashboard-card p-4" style="background-color: #d3a3a6;">
+        <i class="bi bi-person-vcard display-4 text-danger mb-3"></i>
+        <h5>Add Faculty</h5>
+        <a href="#faculty" class="btn btn-outline-danger mt-2">Go</a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card dashboard-card p-4" style="background-color: #d3a3a6;">
+        <i class="bi bi-person-plus display-4 text-danger mb-3"></i>
+        <h5>Add Member</h5>
+        <a href="#member" class="btn btn-outline-danger mt-2">Go</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-md-6">
+      <h5 class="section-title">Recent Activity</h5>
+      <ul class="list-group">
+        <li class="list-group-item"> Book "Python Django" added by Amal</li>
+        <li class="list-group-item">👨‍🏫 Faculty "Amal JK" registered</li>
+        <li class="list-group-item">🧑 Member "Lakshmi" borrowed a book</li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h5 class="section-title">Quick Stats</h5>
+      <div class="stats-box"><strong>Total Books:</strong> {{ total_books }} </div>
+      <div class="stats-box"><strong>Total Members:</strong> {{ members_count }} </div>
+      <div class="stats-box"><strong>Total Faculty:</strong> {{ faculty_count }} </div>
+    </div>
+  </div>
+
+  
+<div class="form-section mt-5">
+  <div class="row g-4">
+
+    
+    <div class="col-md-6" id="faculty">
+      <div class="form-card shadow-sm p-4 rounded" style="background: linear-gradient(to right, #cde8bf, #b4df9b);">
+        <h4 class="text-success text-center mb-4">
+          <i class="bi bi-person-badge me-2"></i>Add New Faculty
+        </h4>
+        <form method="post" action="{% url 'admin-dashboard' %}">
+          {% csrf_token %}
+          <input type="hidden" name="add_faculty" value="1">
+          {% for field in faculty_form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field|add_class:"form-control" }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success">Add Faculty</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    
+    <div class="col-md-6" id="member">
+      <div class="form-card shadow-sm p-4 rounded" style="background: linear-gradient(to right, #e1bcc0, #f6ccd4);">
+        <h4 class="text-danger text-center mb-4">
+          <i class="bi bi-person-plus me-2"></i>Add New Member
+        </h4>
+        <form method="post" action="{% url 'admin-dashboard' %}">
+          {% csrf_token %}
+          <input type="hidden" name="add_member" value="1">
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {{ field|add_class:"form-control" }}
+              {% if field.errors %}
+                <div class="text-danger small">{{ field.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="d-grid">
+            <button type="submit" class="btn btn-danger">Add Member</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+  <div class="section-title mt-5">
+  <h5><i class="bi bi-people-fill me-2 text-primary"></i>Members</h5>
+</div>
+<div class="p-3 mb-4 rounded" style="background: #f2f6fc; border-left: 5px solid #f475b0;">
+  <ul class="list-group list-group-flush">
+    {% for member in members %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <i class="bi bi-person text-primary me-2"></i>
+          <strong>{{ member.username }}</strong>
+        </div>
+        <span class="text-muted small">{{ member.email }}</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">No members found.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+<div class="section-title">
+  <h5><i class="bi bi-person-vcard-fill me-2 text-success"></i>Faculty</h5>
+</div>
+<div class="p-3 mb-5 rounded" style="background: #f3f9f4; border-left: 5px solid #28a745;">
+  <ul class="list-group list-group-flush">
+    {% for faculty in faculty_members %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <i class="bi bi-person-badge-fill text-success me-2"></i>
+          <strong>{{ faculty.username }}</strong>
+        </div>
+        <span class="text-muted small">{{ faculty.email }}</span>
+        
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">No faculty found.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

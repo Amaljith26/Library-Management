@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Register Member{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-lg">
+      <div class="card-header bg-success text-white text-center">
+        <h4 class="mb-0">Register New Member</h4>
+      </div>
+      <div class="card-body bg-light">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success">Register Member</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

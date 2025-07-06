@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    
+    <div class="col-md-4">
+      <div class="card shadow rounded-4 border-0">
+        <div class="card-body text-center">
+          <img src="{% static 'img/profile-avatar.png' %}" alt="Avatar" class="rounded-circle mb-3" width="120">
+          <h4 class="card-title mb-1">{{ member.name }}</h4>
+          <p class="text-muted">{{ member.user.email }}</p>
+          <a href="{% url 'update_member' %}" class="btn btn-outline-primary btn-sm mt-2">Edit Profile</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow rounded-4 border-0">
+        <div class="card-body">
+          <h5 class="card-title mb-3"> Membership Details</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>Membership Type:</strong> {{ member.membership_type }}
+            </li>
+            <li class="list-group-item">
+              <strong>Plan Type:</strong> {{ member.plan_type }}
+            </li>
+            <li class="list-group-item">
+              <strong>Start Date:</strong> {{ member.start_date|date:"F j, Y" }}
+            </li>
+            <li class="list-group-item">
+              <strong>Expiry Date:</strong> {{ member.expiry_date|date:"F j, Y" }}
+            </li>
+            <li class="list-group-item">
+              <strong>Address:</strong> {{ member.address }}
+            </li>
+          </ul>
+
+          {% if can_borrow %}
+            <div class="alert alert-success mt-3" role="alert">
+               Your membership is active. You can borrow books!
+            </div>
+          {% else %}
+            <div class="alert alert-danger mt-3" role="alert">
+              Your membership has expired. Please renew to borrow books.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
