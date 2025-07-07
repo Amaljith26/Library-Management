@@ -9,6 +9,12 @@ from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from memberships.models import Member
+
+
+
 
 
 def member_dashboard(request):
@@ -106,3 +112,13 @@ def edit_member(request, member_id):
         form = UserMemberUpdateForm(instance=user)
 
     return render(request, 'memberships/edit_member.html', {'form': form, 'member': user})
+
+
+def member_list_view(request):
+    query = request.GET.get('q', '')
+    members = Member.objects.all()
+
+    if query:
+        members = members.filter(name__icontains=query) | members.filter(email__icontains=query)
+
+    return render(request, 'memberships/members_list.html', {'members': members})

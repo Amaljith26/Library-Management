@@ -1,6 +1,6 @@
 from django.urls import path
 from .import views
-from .views import BookListView, AddBookView, UpdateBookView,BookPaginatedListView
+from .views import BookListView, AddBookView, UpdateBookView,BookPaginatedListView,book_list
 
 urlpatterns = [
     path('Book List', BookListView.as_view(), name='book-list'),
@@ -9,5 +9,6 @@ urlpatterns = [
     path('books/paginated/', BookPaginatedListView.as_view(), name='book_paginated_list'),
     path('favorites/', views.favorite_books, name='favorite_books'),
     path('favorites/add/<int:book_id>/', views.add_to_favorites, name='add_to_favorites'),  
-    path('favorites/remove/<int:book_id>/', views.remove_from_favorites, name='remove_from_favorites'), 
+    path('favorites/remove/<int:book_id>/', views.remove_from_favorites, name='remove_from_favorites'),
+    path('api/books/', book_list, name='api_books'), 
 ]

@@ -248,3 +248,4 @@ def mark_returned(request, request_id):
         messages.error(request, "Cannot mark this request as returned.")
 
     return redirect('faculty-dashboard')
+

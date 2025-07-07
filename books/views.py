@@ -11,6 +11,11 @@ from collections import defaultdict
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import BookSerializer
+
 class BookListView(TemplateView):
     template_name = 'books/book_list.html'
 
@@ -87,3 +92,10 @@ def remove_from_favorites(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     FavoriteBook.objects.filter(user=request.user, book=book).delete()
     return redirect('favorite_books')
+
+
+@api_view(['GET'])
+def book_list(request):
+    books = Book.objects.all()
+    serializer = BookSerializer(books, many=True)
+    return Response(serializer.data)

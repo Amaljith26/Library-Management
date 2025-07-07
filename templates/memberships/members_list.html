@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Library Members</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #e2b9c3;
+    }
+    .table thead th {
+      background-color: #f36389;
+      color: #45494d;
+    }
+    .member-img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .qr-img {
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+
+  <h3 class="mb-4 text-center"><i class="bi bi-people-fill me-3"></i>Library Members</h3>
+
+  <div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+      <form method="get" class="d-flex shadow-sm rounded-pill overflow-hidden bg-white">
+        <input type="text" name="q" value="{{ request.GET.q }}" class="form-control border-0 ps-4" placeholder="Search by name or email">
+        <button type="submit" class="btn px-4" style="background-color:#f36389;">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col text-center">
+      <a href="{% url 'faculty-dashboard' %}" class="btn text-dark px-4" style='background-color: #ffffff;'>
+        <i class="bi bi-house-door-fill me-1"></i> Librarian Dashboard
+      </a>
+    </div>
+  </div>
+
+  {% if members %}
+    <table class="table table-bordered table-hover text-center align-middle">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Profile</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Membership</th>
+          <th>Plan</th>
+          <th>QR Code</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in members %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              {% if member.profile %}
+                <img src="{{ member.profile.url }}" class="member-img" alt="Profile">
+              {% else %}
+                <i class="bi bi-person-circle fs-4"></i>
+              {% endif %}
+            </td>
+            <td>{{ member.name }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.phone }}</td>
+            <td>{{ member.membership_type }}</td>
+            <td>{{ member.plan_type }}</td>
+            <td>
+              {% if member.qr_code %}
+                <img src="{{ member.qr_code.url }}" class="qr-img" alt="QR Code">
+              {% else %}
+                <span class="text-muted small">No QR</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if member.is_verified_by_faculty %}
+                <span class="badge bg-success">Verified</span>
+              {% else %}
+                <span class="badge bg-secondary">Not Verified</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info text-center">No members found.</div>
+  {% endif %}
+
+</div>
+</body>
+</html>

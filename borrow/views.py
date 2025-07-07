@@ -6,6 +6,10 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Max
 from django.contrib import messages
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import BorrowRequestSerializer
+
 
 @login_required
 def request_borrow(request, book_id):
@@ -59,3 +63,18 @@ def mark_returned(request, request_id):
     borrow.book.save()
     borrow.save()
     return redirect('faculty-dashboard')
+
+
+
+@api_view(['GET', 'POST'])
+def borrow_request_list(request):
+    if request.method == 'GET':
+        borrow_requests = BorrowRequest.objects.all()
+        serializer = BorrowRequestSerializer(borrow_requests, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = BorrowRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

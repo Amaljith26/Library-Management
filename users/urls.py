@@ -20,4 +20,5 @@ urlpatterns = [
     path('faculty-dashboard/', faculty_dashboard, name='faculty-dashboard'),
     path('member-dashboard/', member_dashboard, name='member-dashboard'),
     path('verify-member/<int:member_id>/', views.verify_member, name='verify_member'),
+    
 ]
