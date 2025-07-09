@@ -65,7 +65,6 @@ def mark_returned(request, request_id):
     return redirect('faculty-dashboard')
 
 
-
 @api_view(['GET', 'POST'])
 def borrow_request_list(request):
     if request.method == 'GET':

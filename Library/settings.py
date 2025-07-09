@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig', 
     'books', 
     'memberships', 
-    'borrow',  
-    'reports', 
+    'borrow',   
     'feedback',
     'widget_tweaks',
 

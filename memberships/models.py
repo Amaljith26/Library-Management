@@ -34,7 +34,6 @@ class Member(models.Model):
     start_date = models.DateField(default=timezone.now)
     expiry_date = models.DateTimeField(default=timezone.now)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
-
     is_verified_by_faculty = models.BooleanField(default=False)
     
     def is_active(self):

@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import BookSerializer
+from django.db.models import Q 
 
 class BookListView(TemplateView):
     template_name = 'books/book_list.html'
@@ -22,13 +23,24 @@ class BookListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         books = Book.objects.all().order_by('genre')
+        query = self.request.GET.get('q','')
+        if query:
+            books = Book.objects.filter(
+                        Q(title__icontains=query) |
+                        Q(author__icontains=query) |
+                        Q(genre__icontains=query)  
+)
+        else:
+            books = Book.objects.all()
+
 
         genre_books = defaultdict(list)
         for book in books:
             genre_books[book.genre].append(book)
-
         context['genre_books'] = dict(genre_books)
+        context['query'] = query
         return context
+    
 
 
 
@@ -59,7 +71,7 @@ class BookPaginatedListView(TemplateView):
         query = self.request.GET.get('q', '')
 
         if query:
-            books = Book.objects.filter(title__icontains=query) | Book.objects.filter(author__icontains=query)
+            books = Book.objects.filter(title__icontains=query) | Book.objects.filter(author__icontains=query) | Book.objects.filter(genre__icontains=genre)
         else:
             books = Book.objects.all()
 

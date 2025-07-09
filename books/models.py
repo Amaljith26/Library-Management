@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from django.conf import settings
+from django.db.models import Avg
 
 class Book(models.Model):
     STATUS_CHOICES = [
@@ -26,6 +27,11 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.isbn})"
+    
+    def average_rating(self):
+        from feedback.models import Review  # avoid circular import
+        avg = Review.objects.filter(book=self).aggregate(Avg('rating'))['rating__avg']
+        return round(avg or 0, 1)
 
 
 

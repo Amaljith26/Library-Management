@@ -92,8 +92,6 @@
   </style>
 </head>
 <body>
-
-
 <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow bg-white">
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}"><i class="bi bi-book"></i> Library</a>
@@ -105,6 +103,9 @@
         {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.jstor.org/stable/community.18414337">eLibrary</a>
           </li>
           <li class="nav-item">
             <a href="{% url 'favorite_books' %}" class="btn btn-sm "><i class="bi bi-heart-fill"></i> Favorites </a>
@@ -126,8 +127,18 @@
 </nav>
 
 
+<div class="container mt-4" style="padding-top: 70px;">
+  <form method="get" action="" class="d-flex justify-content-center">
+    <div class="input-group shadow-sm" style="max-width: 600px; width: 100%;">
+      <input type="search" class="form-control border-end-0" name="q" value="{{ query|default:'' }}" placeholder="Search by title or author..." aria-label="Search">
+      <button class="btn btn-outline-primary" type="submit">
+        <i class="bi bi-search"></i> Search
+      </button>
+    </div>
+  </form>
+</div>
 
-<div class="container-fluid" style="padding-top: 100px;">
+<div class="container-fluid" style="padding-top: 20px;">
   {% for genre, books in genre_books.items %}
     <div class="genre-section">
       <h4 class="genre-title"><i class="bi bi-bookmark-heart-fill me-2"></i>{{ genre }}</h4>
@@ -153,8 +164,27 @@
                   <h6 class="card-title">{{ book.title }}</h6>
                   <p class="card-text mb-0"><small>{{ book.author }}</small></p>
                   <p class="card-text"><small class="text-muted">{{ book.status|capfirst }}</small></p>
+                  <div>
+                        <small>
+                          {% with avg=book.average_rating %}
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= avg %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                              {% elif forloop.counter <= avg|add:"0.5" %}
+                                <i class="bi bi-star-half text-warning"></i>
+                              {% else %}
+                                <i class="bi bi-star text-warning"></i>
+                              {% endif %}
+                            {% endfor %}
+                            ({{ avg }}/5)
+                          {% endwith %}
+                        </small>
+                      </div>
                   <a href="{% url 'add_to_favorites' book.id %}" class="btn btn-outline-danger btn-sm mt-2">
                     <i class="bi bi-heart"></i> Favorite
+                  </a>
+                  <a href="{% url 'add_review' book.id %}" class="btn btn-outline-danger btn-sm mt-2">
+                    <i class="bi bi-pencil-square"></i> Rate
                   </a>
                 </div>
               </div>

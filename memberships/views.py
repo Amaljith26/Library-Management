@@ -14,9 +14,6 @@ from rest_framework.response import Response
 from memberships.models import Member
 
 
-
-
-
 def member_dashboard(request):
     user = request.user
     try:
@@ -68,6 +65,8 @@ User = get_user_model()
 def is_faculty_or_admin(user):
     return user.is_authenticated and (user.role == "faculty" or user.is_staff)
 
+
+
 @method_decorator([login_required, user_passes_test(is_faculty_or_admin)], name='dispatch')
 class MemberPaginatedListView(TemplateView):
     template_name = 'memberships/member_paginated_list.html'
@@ -98,16 +97,16 @@ class MemberPaginatedListView(TemplateView):
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import UserMemberUpdateForm
 
+
 User = get_user_model()
 @login_required
 def edit_member(request, member_id):
     user = get_object_or_404(Member, id=member_id)
-
     if request.method == 'POST':
         form = UserMemberUpdateForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('member_list')
+            return redirect('user_profile')
     else:
         form = UserMemberUpdateForm(instance=user)
 
@@ -117,7 +116,6 @@ def edit_member(request, member_id):
 def member_list_view(request):
     query = request.GET.get('q', '')
     members = Member.objects.all()
-
     if query:
         members = members.filter(name__icontains=query) | members.filter(email__icontains=query)
 

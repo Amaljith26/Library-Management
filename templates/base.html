@@ -147,7 +147,7 @@
         </li>
        {% elif request.user.role == 'admin' %}
        <li class="nav-item">
-       <a class="nav-link d-flex align-items-center gap-1" href="/admin/">
+       <a class="nav-link d-flex align-items-center gap-1" href="{% url 'admin-dashboard' %}">
       <i class="bi bi-shield-lock-fill"></i> Admin Panel
       </a>
       </li>
@@ -190,7 +190,7 @@
                   </button>
                 </form>
               </li>
-            </ul>
+            </ul>  
           </li>
 
         {% else %}

@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import FeedbackCreateView
+from . import views
+from .views import add_review
+
 
 urlpatterns = [
-    path('', FeedbackCreateView.as_view(), name='feedback'),
+    path('review/<int:book_id>/', views.add_review, name='add_review'),
 ]
